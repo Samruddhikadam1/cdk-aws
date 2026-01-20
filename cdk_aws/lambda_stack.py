@@ -3,14 +3,15 @@ from aws_cdk import (
     Stack,
     aws_lambda as _lambda,
     aws_iam as iam,
-    aws_s3 as s3
+    aws_s3 as s3,
+    aws_kms as kms
     # aws_sqs as sqs,
 )
 from constructs import Construct
 
 class LambdaStack(Stack):
 
-    def __init__(self, scope: Construct, construct_id: str, bucket: s3.IBucket, **kwargs) -> None:
+    def __init__(self, scope: Construct, construct_id: str, bucket: s3.IBucket, kms_key: kms.IKey, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
         s3_get_role = iam.Role(
@@ -30,6 +31,16 @@ class LambdaStack(Stack):
             iam.PolicyStatement(
                 actions=["s3:GetObject"],
                 resources=[f"{bucket.bucket_arn}/*"]
+            )
+        )
+
+        s3_get_role.add_to_policy(
+            iam.PolicyStatement(
+                actions=[
+                    "kms:Decrypt",
+                    "kms:DescribeKey"
+                ],
+                resources=[kms_key.key_arn]
             )
         )
 

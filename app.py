@@ -18,7 +18,7 @@ CdkAwsStack(app, "CdkAwsStack", env=env)
 
 s3_stack = S3Stack(app, "S3Stack", env=env)
 
-lambda_stack = LambdaStack(app, "LambdaStack", bucket=s3_stack.bucket, env=env)
+lambda_stack = LambdaStack(app, "LambdaStack", bucket=s3_stack.bucket, kms_key=s3_stack.kms_key, env=env)
 
 apigateway_stack = ApiStack(app,"ApiStack", env=env)
 
