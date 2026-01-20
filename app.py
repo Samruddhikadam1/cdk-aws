@@ -1,28 +1,22 @@
 #!/usr/bin/env python3
-import os
 
 import aws_cdk as cdk
-
+from aws_cdk import Environment
 from cdk_aws.cdk_aws_stack import CdkAwsStack
+from cdk_aws.s3_stack import S3Stack
+from cdk_aws.lambda_stack import LambdaStack
 
+env = Environment(
+    account="844216228372",
+    region="ap-south-1"
+)
 
 app = cdk.App()
-CdkAwsStack(app, "CdkAwsStack",
-    # If you don't specify 'env', this stack will be environment-agnostic.
-    # Account/Region-dependent features and context lookups will not work,
-    # but a single synthesized template can be deployed anywhere.
 
-    # Uncomment the next line to specialize this stack for the AWS Account
-    # and Region that are implied by the current CLI configuration.
+CdkAwsStack(app, "CdkAwsStack", env=env)
 
-    #env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
+s3_stack = S3Stack(app, "S3Stack", env=env)
 
-    # Uncomment the next line if you know exactly what Account and Region you
-    # want to deploy the stack to. */
-
-    #env=cdk.Environment(account='123456789012', region='us-east-1'),
-
-    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
-    )
+lambda_stack = LambdaStack(app, "LambdaStack", bucket=s3_stack.bucket, env=env)
 
 app.synth()
