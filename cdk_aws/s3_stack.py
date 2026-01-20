@@ -11,7 +11,7 @@ class S3Stack(Stack):
         bucket = s3.Bucket(
             self,
             "storage-bucket",
-            bucket_name="storage-bucket-07",
+            bucket_name="storage-bucket-0704",
             versioned=True,
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL
         )

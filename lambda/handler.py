@@ -4,7 +4,7 @@ import json
 s3 = boto3.client("s3")
 
 def handler(event, context):
-    bucket_name = event.get("bucket")
+    bucket_name = "storage-bucket-0704"
 
     if not bucket_name:
         return {
@@ -17,7 +17,17 @@ def handler(event, context):
 
         files = []
         if "Contents" in response:
-            files = [obj["Key"] for obj in response["Contents"]]
+            for obj in response["Contents"]:
+                key = obj["Key"]
+
+                # Fetch file content
+                file_obj = s3.get_object(Bucket=bucket_name, Key=key)
+                file_body = file_obj["Body"].read().decode("utf-8")
+
+                files.append({
+                    "filename": key,
+                    "body": file_body
+                })
 
         return {
             "statusCode": 200,
